@@ -22,7 +22,7 @@ var App = React.createClass({
           questions={this.state.questions}
           guesses={this.state.guesses}
         />
-        <Question>What?</Question>
+        <Question question={this.state.questions[this.state.guesses.length]} />
         <Options />
       </div>
     );
@@ -61,10 +61,12 @@ var Progress = React.createClass({
 
 var Question = React.createClass({
   render: function() {
+    text = typeof this.props.question === 'undefined' ?
+      'Loading...' :
+      this.props.question.text;
+
     return (
-      <div className="question">
-        {this.props.children}
-      </div>
+      <div className="question">{text}</div>
     );
   }
 });
