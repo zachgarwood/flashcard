@@ -18,7 +18,13 @@ var App = React.createClass({
       }.bind(this)
     });
   },
+  handleGuess: function(guess) {
+    var guesses = this.state.guesses;
+    guesses.push(guess);
+    this.setState({guesses: guesses});
+  },
   render: function() {
+    var currentQuestion = this.state.questions[this.state.guesses.length];
     return (
       <div className="app">
         <Accuracy
@@ -29,8 +35,9 @@ var App = React.createClass({
           questions={this.state.questions}
           guesses={this.state.guesses}
         />
-        <Question question={this.state.questions[this.state.guesses.length]} />
-        <Options />
+        <Question question={currentQuestion} />
+        <Options question={currentQuestion} onGuess={this.handleGuess}
+        />
       </div>
     );
   }
@@ -78,16 +85,35 @@ var Question = React.createClass({
 });
 
 var Options = React.createClass({
+  handleSubmit: function(event) {
+    event.preventDefault();
+    var yes = React.findDOMNode(this.refs.yes);
+    var no = React.findDOMNode(this.refs.no);
+    var choice = null;
+
+    if (yes.checked) {
+      choice = true;
+      yes.checked = false;
+    } else if (no.checked) {
+      choice = false;
+      no.checked = false;
+    } else {
+      return; // noop
+    }
+    this.props.onGuess({id: this.props.question.id, choice: choice});
+
+    return;
+  },
   render: function() {
     return (
-      <form className="options">
+      <form className="options" onSubmit={this.handleSubmit}>
         <label>
           Yes
-          <input name="answer" type="radio" value="1" ref="answerYes" />
+          <input name="answer" type="radio" value="1" ref="yes" />
         </label>
         <label>
           No
-          <input name="answer" type="radio" value="0" ref="answerNo" />
+          <input name="answer" type="radio" value="0" ref="no" />
         </label>
         <input type="submit" value="Final Answer!" />
       </form>
