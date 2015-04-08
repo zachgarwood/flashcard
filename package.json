@@ -2,7 +2,10 @@
     "name": "flashcard",
     "description": "A flashcard exercise in React",
     "version": "0.0.0",
+    "dependencies": {
+        "express": "~4.0"
+    },
     "devDependencies": {
-        "jasmine": "~2.2.0"
+        "jasmine": "~2.2"
     }
 }

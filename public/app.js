@@ -4,14 +4,14 @@ var App = React.createClass({
   },
   componentDidMount: function() {
     $.ajax({
-      url: 'questions.json',
+      url: '/questions',
       dataType: 'json',
       success: function(response) {
         this.setState({questions: response});
       }.bind(this)
     });
     $.ajax({
-      url: 'guesses.json',
+      url: '/guesses',
       dataType: 'json',
       success: function(response) {
         this.setState({guesses: response});
@@ -55,8 +55,9 @@ var Accuracy = React.createClass({
 
     return (
       <div className="accuracy">
-        {correctGuesses.length / (this.props.guesses.length || 1) * 100}
-        % correct
+        {Math.round(
+          correctGuesses.length / (this.props.guesses.length || 1) * 100
+        )}% correct
       </div>
     );
   }
