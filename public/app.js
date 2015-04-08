@@ -10,6 +10,13 @@ var App = React.createClass({
         this.setState({questions: response});
       }.bind(this)
     });
+    $.ajax({
+      url: 'guesses.json',
+      dataType: 'json',
+      success: function(response) {
+        this.setState({guesses: response});
+      }.bind(this)
+    });
   },
   render: function() {
     return (
@@ -41,7 +48,8 @@ var Accuracy = React.createClass({
 
     return (
       <div className="accuracy">
-        {correctGuesses.length / (this.props.guesses.length || 1) * 100}% correct
+        {correctGuesses.length / (this.props.guesses.length || 1) * 100}
+        % correct
       </div>
     );
   }
@@ -61,12 +69,10 @@ var Progress = React.createClass({
 
 var Question = React.createClass({
   render: function() {
-    text = typeof this.props.question === 'undefined' ?
-      'Loading...' :
-      this.props.question.text;
-
     return (
-      <div className="question">{text}</div>
+      <div className="question">
+        {this.props.question ? this.props.question.text : 'loading...'}
+      </div>
     );
   }
 });
