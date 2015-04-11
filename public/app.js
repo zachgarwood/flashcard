@@ -32,21 +32,27 @@ var App = React.createClass({
   },
   render: function() {
     var currentQuestion = this.state.questions[this.state.guesses.length];
-    return (
-      <div className="app">
-        <Accuracy
-          questions={this.state.questions}
-          guesses={this.state.guesses}
-        />
-        <Progress
-          questions={this.state.questions}
-          guesses={this.state.guesses}
-        />
-        <Question question={currentQuestion} />
-        <Options question={currentQuestion} onGuess={this.handleGuess}
-        />
-      </div>
-    );
+    if (this.state.questions.length) {
+      return (
+        <div className="app">
+          <Accuracy
+            questions={this.state.questions}
+            guesses={this.state.guesses}
+          />
+          <Progress
+            questions={this.state.questions}
+            guesses={this.state.guesses}
+          />
+          <Question question={currentQuestion} />
+          <Options question={currentQuestion} onGuess={this.handleGuess}
+          />
+        </div>
+      );
+    } else {
+      return (
+        <div className="app">Loading...</div>
+      );
+    }
   }
 });
 
@@ -85,9 +91,7 @@ var Progress = React.createClass({
 var Question = React.createClass({
   render: function() {
     return (
-      <div className="question">
-        {this.props.question ? this.props.question.text : 'loading...'}
-      </div>
+      <div className="question">{this.props.question.text}</div>
     );
   }
 });
