@@ -3,6 +3,7 @@
     "description": "A flashcard exercise in React",
     "version": "0.0.0",
     "dependencies": {
+        "body-parser": "~1.0",
         "express": "~4.0",
         "mongodb": "~2.0"
     },
