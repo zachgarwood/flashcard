@@ -22,6 +22,13 @@ var App = React.createClass({
     var guesses = this.state.guesses;
     guesses.push(guess);
     this.setState({guesses: guesses});
+    console.log(JSON.stringify(guess));
+    $.ajax({
+      url: '/guesses',
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(guess)
+    });
   },
   render: function() {
     var currentQuestion = this.state.questions[this.state.guesses.length];
@@ -49,7 +56,7 @@ var Accuracy = React.createClass({
     var correctGuesses = _.filter(this.props.guesses, function(guess) {
       return _.where(
         questions,
-        {id: guess.id, answer: guess.choice}
+        {_id: guess.question_id, answer: guess.choice}
       ).length > 0;
     });
 
@@ -101,7 +108,7 @@ var Options = React.createClass({
     } else {
       return; // noop
     }
-    this.props.onGuess({id: this.props.question.id, choice: choice});
+    this.props.onGuess({question_id: this.props.question._id, choice: choice});
 
     return;
   },
