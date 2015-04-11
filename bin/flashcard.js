@@ -35,7 +35,7 @@ app.get('/guesses', function(request, response) {
           return console.dir(error);
         }
         response.send(items);
-        db.close
+        db.close();
       })
   });
 });
@@ -48,7 +48,7 @@ app.post('/guesses', function(request, response) {
     db.collection('guesses')
       .insert(request.body);
     response.status(200).end();
-    db.close
+    db.close();
   });
 });
 app.listen(8080);

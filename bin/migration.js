@@ -10,15 +10,16 @@ persistence.client.connect(persistence.url, function(error, db) {
     console.log('adding questions');
     questions
       .insert(require('../data/questions.json'), function(error, results) {
-        db.close()
+        db.close();
       });
   } else if (direction == 'down') {
     console.log('removing questions');
     questions.drop();
-    db.close()
+    db.collection('guesses').drop();
+    db.close();
   } else {
     console.log('choose a migration directon: "up" or "down"');
-    db.close()
+    db.close();
     process.exit(1);
   }
   console.log('migration complete');
