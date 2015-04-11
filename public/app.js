@@ -18,7 +18,7 @@ var App = React.createClass({
       }.bind(this)
     });
   },
-  handleGuess: function(guess) {
+  saveGuess: function(guess) {
     var guesses = this.state.guesses;
     guesses.push(guess);
     this.setState({guesses: guesses});
@@ -31,28 +31,67 @@ var App = React.createClass({
     });
   },
   render: function() {
-    var currentQuestion = this.state.questions[this.state.guesses.length];
-    if (this.state.questions.length) {
-      return (
-        <div className="app">
-          <Accuracy
-            questions={this.state.questions}
-            guesses={this.state.guesses}
-          />
-          <Progress
-            questions={this.state.questions}
-            guesses={this.state.guesses}
-          />
-          <Question question={currentQuestion} />
-          <Options question={currentQuestion} onGuess={this.handleGuess}
-          />
-        </div>
-      );
-    } else {
-      return (
-        <div className="app">Loading...</div>
-      );
+    var guesses = this.state.guesses;
+    var questions = this.state.questions;
+    var view = <Loading />;
+    if (questions.length) {
+      if (guesses.length == questions.length) {
+        view = <Complete questions={questions} guesses={guesses} />;
+      } else {
+        view =
+          <Interface
+            questions={questions}
+            guesses={guesses}
+            saveGuess={this.saveGuess}
+          />;
+      }
     }
+
+    return (
+      <div className="app">{view}</div>
+    );
+  }
+});
+
+var Loading = React.createClass({
+  render: function() {
+    return (
+      <span className="loading">Loading...</span>
+    );
+  }
+});
+
+var Interface = React.createClass({
+  render: function() {
+    var guesses = this.props.guesses;
+    var questions = this.props.questions;
+    var currentQuestion = questions[guesses.length];
+
+    return (
+      <div className="interface">
+        <Accuracy questions={questions} guesses={guesses} />
+        <Progress questions={questions} guesses={guesses} />
+        <Question question={currentQuestion} />
+        <Options
+          question={currentQuestion}
+          saveGuess={this.props.saveGuess}
+        />
+      </div>
+    );
+  }
+});
+
+var Complete = React.createClass({
+  render: function() {
+    return (
+      <div className="complete">
+        <Accuracy
+          questions={this.props.questions}
+          guesses={this.props.guesses}
+        />
+        <span>Congratulations, you're done!</span>
+      </div>
+    );
   }
 });
 
@@ -112,7 +151,9 @@ var Options = React.createClass({
     } else {
       return; // noop
     }
-    this.props.onGuess({question_id: this.props.question._id, choice: choice});
+    this.props.saveGuess(
+      {question_id: this.props.question._id, choice: choice}
+    );
 
     return;
   },
