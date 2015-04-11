@@ -1,0 +1,22 @@
+[
+  {"text": "Is Barack Obama the 47th President of the United States?", "answer": false},
+  {"text": "Does New York City have two baseball teams?", "answer": true},
+  {"text": "Is Germany the largest economy in the EU?", "answer": true},
+  {"text": "Did Spain win the 2014 World Cup?", "answer": false},
+  {"text": "Was Apple Inc. founded in 1979?", "answer": false},
+  {"text": "Is Joe Biden the Vice President?", "answer": true},
+  {"text": "is the Atlantic Ocean the largest ocean in the world?", "answer": false},
+  {"text": "Is 13 + 79 equal to 92?", "answer": true},
+  {"text": "Is Javascript a programming language?", "answer": true},
+  {"text": "Is the U.S. a member of the League of Nations?", "answer": false},
+  {"text": "Did Michael Bay direct the Transformers movies?", "answer": true},
+  {"text": "Is Facebook headquartered in Silicon Valley?", "answer": true},
+  {"text": "Does the King of Hearts have a mustache?", "answer": false},
+  {"text": "Did Marilyn Monroe have six toes?", "answer": true},
+  {"text": "Do you burn more calories sleeping than watching TV?", "answer": true},
+  {"text": "Does a duck's quack echo?", "answer": false},
+  {"text": "Is the official currency of Germany the Mark?", "answer": false},
+  {"text": "Is Mars the third planet from the sun?", "answer": false},
+  {"text": "Is Mount Fuji the third tallest mountain on Earth?", "answer": false},
+  {"text": "Is Learnerator awesome?", "answer": true}
+]
