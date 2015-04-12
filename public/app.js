@@ -1,4 +1,13 @@
+var Route = ReactRouter.Route;
+var RouteHandler = ReactRouter.RouteHandler;
+var auth = {
+  token: null
+};
+
 var App = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   getInitialState: function() {
     return {questions: [], guesses: []};
   },
@@ -22,7 +31,6 @@ var App = React.createClass({
     var guesses = this.state.guesses;
     guesses.push(guess);
     this.setState({guesses: guesses});
-    console.log(JSON.stringify(guess));
     $.ajax({
       url: '/guesses',
       method: 'POST',
@@ -33,8 +41,11 @@ var App = React.createClass({
   render: function() {
     var guesses = this.state.guesses;
     var questions = this.state.questions;
+
     var view = <Loading />;
-    if (questions.length) {
+    if (!auth.token) {
+      view = <RouteHandler />;
+    } else if (questions.length) {
       if (guesses.length == questions.length) {
         view = <Complete questions={questions} guesses={guesses} />;
       } else {
@@ -168,13 +179,68 @@ var Options = React.createClass({
           No
           <input name="answer" type="radio" value="0" ref="no" />
         </label>
-        <input type="submit" value="Final Answer!" />
+        <button type="submit">Final Answer!</button>
       </form>
     );
   }
 });
 
-React.render(
-  <App />,
-  document.getElementById('app')
+var Login = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.func
+  },
+  handleSubmit: function(event) {
+    event.preventDefault();
+    var email = this.refs.email.getDOMNode().value;
+    var passphrase = this.refs.passphrase.getDOMNode().value;
+    auth.token = '12345';
+    this.context.router.goBack();
+  },
+  willTransitionTo: function(transition, params) {
+    console.log(auth);
+    auth.token = '12345';
+    this.context.router.goBack();
+  },
+  render: function() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <div>
+          <label>
+            Email:
+            <input
+              name="email"
+              type="text"
+              placeholder="you@email.com"
+              ref="email"
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Passphrase: 
+            <input
+              name="passphrase"
+              type="password"
+              placeholder="I'm insecure."
+              ref="passphrase"
+            />
+          </label>
+        </div>
+        <button type="submit">Login</button>
+      </form>
+    );
+  }
+});
+
+var routes = (
+  <Route path="/" handler={App}>
+    <Route name="login" handler={Login} />
+  </Route>
 );
+
+ReactRouter.run(routes, function(Handler) {
+  React.render(
+    <Handler />,
+    document.getElementById('app')
+  );
+});
