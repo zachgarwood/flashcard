@@ -12,10 +12,18 @@ persistence.client.connect(persistence.url, function(error, db) {
       .insert(require('../data/questions.json'), function(error, results) {
         db.close();
       });
+    console.log('adding user');
+    var defaultUser =
+      {email: 'user@email.com', passphrase: '12345', authToken: 'token'}; 
+    var users = db.collection('users');
+    users.insert(defaultUser, function(error, results) {
+      db.close();
+    });
   } else if (direction == 'down') {
     console.log('removing questions');
     questions.drop();
     db.collection('guesses').drop();
+    db.collection('users').drop();
     db.close();
   } else {
     console.log('choose a migration directon: "up" or "down"');

@@ -1,15 +1,19 @@
 var Route = ReactRouter.Route;
 var RouteHandler = ReactRouter.RouteHandler;
-var auth = {
-  token: null
-};
+var DefaultRoute = ReactRouter.DefaultRoute;
 
 var App = React.createClass({
   contextTypes: {
     router: React.PropTypes.func
   },
   getInitialState: function() {
-    return {questions: [], guesses: []};
+    return {authToken: null, questions: [], guesses: []};
+  },
+  componentWillMount: function() {
+    var authToken = sessionStorage.getItem('authToken');
+    if (!authToken) {
+      this.context.router.transitionTo('login');
+    }
   },
   componentDidMount: function() {
     $.ajax({
@@ -41,25 +45,34 @@ var App = React.createClass({
   render: function() {
     var guesses = this.state.guesses;
     var questions = this.state.questions;
+    console.log(sessionStorage.getItem('authToken'));
+
+    return (
+      <RouteHandler
+        questions={questions}
+        guesses={guesses}
+        saveGuess={this.saveGuess}
+      />
+    );
+  }
+});
+
+var Interface = React.createClass({
+  render: function() {
+    var guesses = this.props.guesses;
+    var questions = this.props.questions;
 
     var view = <Loading />;
-    if (!auth.token) {
-      view = <RouteHandler />;
-    } else if (questions.length) {
+    if (questions.length) {
       if (guesses.length == questions.length) {
         view = <Complete questions={questions} guesses={guesses} />;
       } else {
-        view =
-          <Interface
-            questions={questions}
-            guesses={guesses}
-            saveGuess={this.saveGuess}
-          />;
+        view = <Flashcard questions={questions} guesses={guesses} saveGuess={this.props.saveGuess} />;
       }
     }
 
     return (
-      <div className="app">{view}</div>
+      <div className="interface">{view}</div>
     );
   }
 });
@@ -72,14 +85,14 @@ var Loading = React.createClass({
   }
 });
 
-var Interface = React.createClass({
+var Flashcard = React.createClass({
   render: function() {
     var guesses = this.props.guesses;
     var questions = this.props.questions;
     var currentQuestion = questions[guesses.length];
 
     return (
-      <div className="interface">
+      <div className="flashcard">
         <Accuracy questions={questions} guesses={guesses} />
         <Progress questions={questions} guesses={guesses} />
         <Question question={currentQuestion} />
@@ -93,6 +106,9 @@ var Interface = React.createClass({
 });
 
 var Complete = React.createClass({
+  componentDidMount: function() {
+    sessionStorage.clear();
+  },
   render: function() {
     return (
       <div className="complete">
@@ -173,7 +189,7 @@ var Options = React.createClass({
       <form className="options" onSubmit={this.handleSubmit}>
         <label>
           Yes
-          <input name="answer" type="radio" value="1" ref="yes" />
+          <input name="answer" type="radio" value="1" ref="yes"/>
         </label>
         <label>
           No
@@ -189,51 +205,68 @@ var Login = React.createClass({
   contextTypes: {
     router: React.PropTypes.func
   },
+  getInitialState: function() {
+    return {
+      error: false,
+      message: 'There was an error logging in! Hint: user@email.com and 12345.'
+    };
+  },
   handleSubmit: function(event) {
     event.preventDefault();
     var email = this.refs.email.getDOMNode().value;
     var passphrase = this.refs.passphrase.getDOMNode().value;
-    auth.token = '12345';
-    this.context.router.goBack();
-  },
-  willTransitionTo: function(transition, params) {
-    console.log(auth);
-    auth.token = '12345';
-    this.context.router.goBack();
+    var user = {email: email, passphrase: passphrase};
+    $.ajax({
+      url: '/users',
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(user),
+      success: function(response) {
+        sessionStorage.setItem('authToken', response.authToken);
+        this.context.router.goBack();
+      }.bind(this),
+      error: function(response) {
+        this.setState({error: true});
+      }.bind(this)
+    });
   },
   render: function() {
     return (
-      <form onSubmit={this.handleSubmit}>
-        <div>
-          <label>
-            Email:
-            <input
-              name="email"
-              type="text"
-              placeholder="you@email.com"
-              ref="email"
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Passphrase: 
-            <input
-              name="passphrase"
-              type="password"
-              placeholder="I'm insecure."
-              ref="passphrase"
-            />
-          </label>
-        </div>
-        <button type="submit">Login</button>
-      </form>
+      <div className="login">
+        <div>{this.state.error ? this.state.message : ''}</div>
+        <form onSubmit={this.handleSubmit}>
+          <div>
+            <label>
+              Email:
+              <input
+                name="email"
+                type="text"
+                placeholder="user@email.com"
+                ref="email"
+              />
+            </label>
+          </div>
+          <div>
+            <label>
+              Passphrase:
+              <input
+                name="passphrase"
+                type="password"
+                placeholder="12345"
+                ref="passphrase"
+              />
+            </label>
+          </div>
+          <button type="submit">Login</button>
+        </form>
+      </div>
     );
   }
 });
 
 var routes = (
   <Route path="/" handler={App}>
+    <DefaultRoute handler={Interface} />
     <Route name="login" handler={Login} />
   </Route>
 );

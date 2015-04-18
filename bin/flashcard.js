@@ -51,5 +51,25 @@ app.post('/guesses', function(request, response) {
     db.close();
   });
 });
+app.post('/users', function(request, response) {
+  console.log('post users');
+  persistence.client.connect(persistence.url, function(error, db){
+    if (error) {
+      return console.dir(error);
+    }
+    db.collection('users')
+      .find({email: request.body.email, passphrase: request.body.passphrase})
+      .toArray(function(error, users) {
+        if (error) {
+          return console.dir(error);
+        } else if (users.length == 0) {
+          console.log('No user with those credentials exists!');
+          response.status(401).end();
+        } else {
+          response.send({authToken: users[0].authToken});
+        }
+    });
+  });
+});
 app.listen(8080);
 console.log('listening');
