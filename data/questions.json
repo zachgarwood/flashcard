@@ -12,7 +12,7 @@
   {"text": "Did Michael Bay direct the Transformers movies?", "answer": true},
   {"text": "Is Facebook headquartered in Silicon Valley?", "answer": true},
   {"text": "Does the King of Hearts have a mustache?", "answer": false},
-  {"text": "Did Marilyn Monroe have six toes?", "answer": true},
+  {"text": "Did Marilyn Monroe have six toes?", "answer": false},
   {"text": "Do you burn more calories sleeping than watching TV?", "answer": true},
   {"text": "Does a duck's quack echo?", "answer": false},
   {"text": "Is the official currency of Germany the Mark?", "answer": false},
